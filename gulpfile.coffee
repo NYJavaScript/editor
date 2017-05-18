@@ -19,7 +19,7 @@ config =
   paths:
     app: "app"
     tmp: ".tmp"
-    dist: "dist"
+    dist: "docs"
     scripts: "app/scripts"
     styles: "app/styles"
     assets: "app/assets"
@@ -71,9 +71,9 @@ config =
 
       plugins: [
         new webpack.optimize.DedupePlugin()
-        new webpack.optimize.UglifyJsPlugin(
-          compressor: { warnings: false }
-        )
+        # new webpack.optimize.UglifyJsPlugin(
+        #   compressor: { warnings: false }
+        # )
       ]
 
 config = _(config).mapObject (val) ->
@@ -94,14 +94,14 @@ gulp
 
 
     instructions = gulp
-      .src path.join(config.paths.app, "index.html")
+      .src path.join(config.paths.app, "{example.html,extra.html,round*.html}")
       .pipe gulp.dest(config.paths.tmp)
 
-    merge assets, instructions
+    merge assets, instructions,
 
   .task "copy-page-files", ->
     gulp
-      .src path.join(config.paths.assets, "{instructions.html,page.png,result.html,beach.jpg}")
+      .src path.join(config.paths.assets, "{instructions.html,page*.png,result.html,beach.jpg}")
       .pipe gulp.dest(path.join config.paths.dist, "assets")
 
   .task "webpack-dev-server", (done) ->
@@ -128,9 +128,39 @@ gulp
 
   .task "inline", ->
     gulp
-      .src "#{config.paths.tmp}/index.html"
+      .src "#{config.paths.tmp}/example.html"
       .pipe $.inlineSource()
-      .pipe rename(basename: "editor")
+      .pipe rename(basename: "example")
+      .pipe gulp.dest("#{config.paths.dist}")
+
+    gulp
+      .src "#{config.paths.tmp}/extra.html"
+      .pipe $.inlineSource()
+      .pipe rename(basename: "extra")
+      .pipe gulp.dest("#{config.paths.dist}")
+
+    gulp
+      .src "#{config.paths.tmp}/round1.html"
+      .pipe $.inlineSource()
+      .pipe rename(basename: "round1")
+      .pipe gulp.dest("#{config.paths.dist}")
+
+    gulp
+      .src "#{config.paths.tmp}/round2.html"
+      .pipe $.inlineSource()
+      .pipe rename(basename: "round2")
+      .pipe gulp.dest("#{config.paths.dist}")
+
+    gulp
+      .src "#{config.paths.tmp}/round3.html"
+      .pipe $.inlineSource()
+      .pipe rename(basename: "round3")
+      .pipe gulp.dest("#{config.paths.dist}")
+
+    gulp
+      .src "#{config.paths.tmp}/round4.html"
+      .pipe $.inlineSource()
+      .pipe rename(basename: "round4")
       .pipe gulp.dest("#{config.paths.dist}")
 
   .task "dist", ->
